@@ -28,16 +28,16 @@ background: #ddf } td[colspan="2"] { text-align: right }</style>
 // Check for login submission
 if (!is_file("shadow.cgi")) { $q= fopen("shadow.cgi", "w"); fputs($q, "admin5<>c21f969b5f03d33d43e04f8f136e7682<>9999\n"); chmod("shadow.cgi", 0700); fclose($q); }
 $admin = file("shadow.cgi");
-if ($_POST[adminname]) $_COOKIE[adminname] = strtolower($_POST[adminname]);
-if ($_POST[adminpass]) $_COOKIE[adminpass] = md5($_POST[adminpass]);
-if (!$_COOKIE[adminname]) { login(0); } $loggedin = false;
+if ($_POST[adminname]) $_SESSION[adminname] = strtolower($_POST[adminname]);
+if ($_POST[adminpass]) $_SESSION[adminpass] = md5($_POST[adminpass]);
+if (!$_SESSION[adminname]) { login(0); } $loggedin = false;
 // Check password
 foreach ($admin as $line) { list($name, $pass, $level) = explode("<>", $line);
-if ($_COOKIE[adminname] == $name) { if ($_COOKIE[adminpass] != $pass) login(1);
+if ($_SESSION[adminname] == $name) { if ($_SESSION[adminpass] != $pass) login(1);
 $loggedin = true; $mylevel = rtrim($level); }} if ($loggedin == false) login(2);
 // Logged in
-if ($_POST[adminname]) { setcookie ("adminname", $_COOKIE[adminname]);
-setcookie ("adminpass", $_COOKIE[adminpass]); }
+if ($_POST[adminname]) { setcookie ("adminname", $_SESSION[adminname]);
+setcookie ("adminpass", $_SESSION[adminpass]); }
 
 
 ################################################################################
