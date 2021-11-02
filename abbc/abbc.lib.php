@@ -884,7 +884,7 @@ function abbc_reg_replace_tag($text, $tagname, $totext = false)
 			$htmlopen = $abbc_tags[$tagname]["htmlopen$n"];
 			if ($htmlopen != "" && $htmlopen{0} == "~")
 			{
-				$mod .= "e";
+				//$mod .= "e"; // /e is deprecated, so fix with eval
 				$htmlopen = substr($htmlopen, 1);
 			}
 
@@ -928,7 +928,11 @@ function abbc_reg_replace_tag($text, $tagname, $totext = false)
 		// now it's time to actually perform the translation!
 		// echo'ing a variable that contains $name would echo the contents of the php varialbe $name. that's pretty uncool
 		$text = str_replace("$", "&#x24;", $text);
-		$text = preg_replace($reg, $html, $text);
+		$count = 0;
+		$text = preg_replace($reg, $html, $text, -1, $count);
+		if (!$totext && $count > 0){
+			eval("\$text=".$text.";");	
+		}
 		$text = str_replace("&#x24;", "$", $text);
 	}
 	if ($tagname == 'img') $abbc_scan['img']++;
