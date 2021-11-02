@@ -877,6 +877,7 @@ function abbc_reg_replace_tag($text, $tagname, $totext = false)
 	for ($n = $abbc_tags[$tagname]['maxparam']; $n >= $abbc_tags[$tagname]['minparam']; $n--)
 	{
 		$mod = $nocase;
+		$hase = false;
 
 		// check for PHP code
 		if (!$totext)
@@ -884,7 +885,7 @@ function abbc_reg_replace_tag($text, $tagname, $totext = false)
 			$htmlopen = $abbc_tags[$tagname]["htmlopen$n"];
 			if ($htmlopen != "" && $htmlopen{0} == "~")
 			{
-				//$mod .= "e"; // /e is deprecated, so fix with eval
+				$hase = true; //$mod .= "e"; // /e is deprecated, so fix with eval
 				$htmlopen = substr($htmlopen, 1);
 			}
 
@@ -911,7 +912,7 @@ function abbc_reg_replace_tag($text, $tagname, $totext = false)
 			$maxref = 2;
 			while (strpos($html, '$' . $maxref) !== false) $maxref++;
 
-			if (strpos($mod, "e") === false)
+			if ($hase === false) //if (strpos($mod, "e") === false)
 			{
 				// no PHP code, just add the $'s
 				$html = "$1" . $html . "$" . $maxref;
@@ -930,7 +931,7 @@ function abbc_reg_replace_tag($text, $tagname, $totext = false)
 		$text = str_replace("$", "&#x24;", $text);
 		$count = 0;
 		$text = preg_replace($reg, $html, $text, -1, $count);
-		if (!$totext && $count > 0){
+		if ($hase && $count > 0){
 			eval("\$text=".$text.";");	
 		}
 		$text = str_replace("&#x24;", "$", $text);
