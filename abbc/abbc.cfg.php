@@ -12,7 +12,7 @@ $abbc_cfg['derefer'] = '';
 
 // activated subsets
 
-$abbc_cfg['subsets'] = ABBC_ALL & ~ABBC_PARAGRAPH & ~ABBC_SMILEYS & ~ABBC_LIST & ~ABBC_FONT & ~ABBC_IMG & ~ABBC_CODE & ~ABBC_QUOTE & ~ABBC_URL & ~ABBC_SPECIAL;
+$abbc_cfg['subsets'] = ABBC_ALL & ~ABBC_PARAGRAPH & ~ABBC_SMILEYS & ~ABBC_LIST & ~ABBC_FONT & ~ABBC_IMG & ~ABBC_QUOTE & ~ABBC_URL & ~ABBC_SPECIAL;
 //$abbc_cfg['subsets'] = 2;
 
 // embed the text output in <div> tags
