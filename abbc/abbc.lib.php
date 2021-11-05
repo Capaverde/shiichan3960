@@ -62,7 +62,7 @@ function abbc_init()
 	for ($n = 0; $n < $abbc_smiley_count; $n++)
 	{
 		// get the first character of this smiley and store it, it it isn't already there
-		$start = $abbc_smileys[$n]['code']{0};
+		$start = $abbc_smileys[$n]['code'][0];
 		if (strpos($abbc_smiley_starts, $start) === false) $abbc_smiley_starts .= $start;
 
 		$abbc_smileys[$n]['code_len'] = strlen($abbc_smileys[$n]['code']);
@@ -171,7 +171,7 @@ function abbc_proc($text, $check = false, $totext = false)
 	$length = strlen($text);
 	for ($pos = 0; $pos < strlen($text); $pos++)
 	{
-/*		if ($text{$pos} == "&" && $minimum && !$totext)
+/*		if ($text[$pos] == "&" && $minimum && !$totext)
 		{
 			// don't change &#...; codes
 			$n = 0;
@@ -196,25 +196,25 @@ function abbc_proc($text, $check = false, $totext = false)
 				$pos += 4;
 			}
 		}
-		elseif ($text{$pos} == "<" && $minimum && !$totext)
+		elseif ($text[$pos] == "<" && $minimum && !$totext)
 		{
 			$text = substr($text, 0, $pos) . "&lt;" . substr($text, $pos + 1);
 			$pos += 3;
 		}
-		elseif ($text{$pos} == ">" && $minimum && !$totext)
+		elseif ($text[$pos] == ">" && $minimum && !$totext)
 		{
 			$text = substr($text, 0, $pos) . "&gt;" . substr($text, $pos + 1);
 			$pos += 3;
 		}*/
-		if ($text{$pos} == "[" && $text{$pos - 1} == "\\" && $doproc && $minimum && !$totext)
+		if ($text[$pos] == "[" && $text[$pos - 1] == "\\" && $doproc && $minimum && !$totext)
 		{
 			$text = substr($text, 0, $pos - 1) . "[" . substr($text, $pos + 1);
 			$pos -= 1;
 		}
-		elseif ($text{$pos} == "[" && $text{$pos - 1} != "\\" && $minimum)
+		elseif ($text[$pos] == "[" && $text[$pos - 1] != "\\" && $minimum)
 		{
 			$endpos = $pos + 1;
-			while ($text{$endpos} != "]" && $text{$endpos} != "=" && $endpos - $pos - 1 <= $max_taglen) $endpos++;
+			while ($text[$endpos] != "]" && $text[$endpos] != "=" && $endpos - $pos - 1 <= $max_taglen) $endpos++;
 			$thistag = substr($text, $pos + 1, $endpos - ($pos + 1));
 			if ($endpos - $pos - 1 > $max_taglen)
 			{
@@ -229,12 +229,12 @@ function abbc_proc($text, $check = false, $totext = false)
 
 			// find tag's end to jump to it when we're finished here...
 			$stored_pos = $endpos;
-			while ($text{$stored_pos} != "]" && $text{$stored_pos} != "\n") $stored_pos++;
+			while ($text[$stored_pos] != "]" && $text[$stored_pos] != "\n") $stored_pos++;
 			// if there was a new-line, this can't be a serious tag... let's just ignore it!
-			if ($text{$stored_pos} == "\n") continue;
+			if ($text[$stored_pos] == "\n") continue;
 
 			// check for closing tag
-			if ($thistag{0} == "/")
+			if ($thistag[0] == "/")
 			{
 				$closingtag = true;
 				$thistag = substr($thistag, 1);   // remove "/"
@@ -257,8 +257,8 @@ function abbc_proc($text, $check = false, $totext = false)
 
 						if ($dbg) $dbg .= "pos:$pos, thistag:$thistag, tagstack:" . join("|", $abbc_tagstack) . ", text:" . t2h(trim(substr($text, 0, $pos) . "*" . substr($text, $pos))) . "<br>";
 
-						while ($text{$endpos} != "]" && $text{$endpos} != "\n") $endpos++;
-						if ($text{$endpos} == "\n")
+						while ($text[$endpos] != "]" && $text[$endpos] != "\n") $endpos++;
+						if ($text[$endpos] == "\n")
 						{
 							// oops, there was a new-line before the tag's end
 							// so there must have been a syntax error
@@ -419,7 +419,7 @@ function abbc_proc($text, $check = false, $totext = false)
 		elseif ($abbc_cfg['subsets'] & ABBC_SMILEYS && $doproc && !$totext)
 		{
 			// could be a smiley?
-			$could_be_smiley = strpos($smiley_starts, $text{$pos});
+			$could_be_smiley = strpos($smiley_starts, $text[$pos]);
 
 			// not impossible -> we have to check them all
 			if ($could_be_smiley !== false)
@@ -607,8 +607,8 @@ function abbc_proc($text, $check = false, $totext = false)
 	}
 
 	// remove the added \r's if they are still there
-	if ($text{0} == "\r") $text = substr($text, 1);
-	if ($text{strlen($text) - 1} == "\r") $text = substr($text, 0, strlen($text) - 1);
+	if ($text[0] == "\r") $text = substr($text, 1);
+	if ($text[strlen($text) - 1] == "\r") $text = substr($text, 0, strlen($text) - 1);
 
 	if ($minimum && !$totext)
 	{
@@ -883,7 +883,7 @@ function abbc_reg_replace_tag($text, $tagname, $totext = false)
 		if (!$totext)
 		{
 			$htmlopen = $abbc_tags[$tagname]["htmlopen$n"];
-			if ($htmlopen != "" && $htmlopen{0} == "~")
+			if ($htmlopen != "" && $htmlopen[0] == "~")
 			{
 				$hase = true; //$mod .= "e"; // /e is deprecated, so fix with eval
 				$htmlopen = substr($htmlopen, 1);
@@ -1001,12 +1001,12 @@ function abbc_reg_replace_smiley($text, $n, $wb = "")
 function abbc_expand_selection($text, &$startpos, &$endpos, $length = -1)
 {
 	// go backward from the beginning on
-	while ($startpos > 0 && ($text{$startpos - 1} == " " || $text{$startpos - 1} == "\t" || $text{$startpos - 1} == "\n")) $startpos--;
+	while ($startpos > 0 && ($text[$startpos - 1] == " " || $text[$startpos - 1] == "\t" || $text[$startpos - 1] == "\n")) $startpos--;
 
 	// go forward from the end on
 	if ($length == -1) $length = strlen($text);
 	$end_diff = 0;
-	while ($endpos < $length && ($text{$endpos + 1} == " " || $text{$endpos + 1} == "\t" || $text{$endpos + 1} == "\n"))
+	while ($endpos < $length && ($text[$endpos + 1] == " " || $text[$endpos + 1] == "\t" || $text[$endpos + 1] == "\n"))
 	{
 		$endpos++;
 		$end_diff++;
@@ -1023,12 +1023,12 @@ function abbc_expand_selection_smiley($text, &$startpos, &$endpos, $wb, $length 
 	$wb2 = stripslashes($wb);
 
 	// go backward from the beginning on
-	while ($startpos > 0 && strpos($wb2, $text{$startpos - 1}) !== false) $startpos--;
+	while ($startpos > 0 && strpos($wb2, $text[$startpos - 1]) !== false) $startpos--;
 
 	// go forward from the end on
 	if ($length == -1) $length = strlen($text);
 	$end_diff = 0;
-	while ($endpos < $length - 1 && strpos($wb2, $text{$endpos + 1}) !== false)
+	while ($endpos < $length - 1 && strpos($wb2, $text[$endpos + 1]) !== false)
 	{
 		$endpos++;
 		$end_diff++;

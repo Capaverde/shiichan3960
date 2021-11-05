@@ -6,7 +6,7 @@
 require "include.php";
 
 // basic security measures-- don't leave home without 'em!
-if(get_magic_quotes_gpc()) $_POST = array_map("stripslashes", $_POST);
+//if(get_magic_quotes_gpc()) $_POST = array_map("stripslashes", $_POST);
 $_POST = array_map("htmlspecialquotes", $_POST);
 $_COOKIE = array_map("htmlspecialquotes", $_COOKIE);
 
@@ -272,7 +272,7 @@ if (file_exists("mohel.cgi")) {
 $mohel = file("mohel.cgi") or fancydie("Couldn't open mohel.cgi :(");
 foreach ($mohel as $line) {
 	$line = trim($line);
-	if ($line{0} == '#') {
+	if ($line[0] == '#') {
 		if ($line == '#'.$trip) $censorme = true;
 	} else {
 		if ($line == $_POST[name].'#'.$trip) $censorme = true;
