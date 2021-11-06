@@ -2,6 +2,7 @@
 /* Shiichan 4000
 ** Add post
 */
+error_reporting(-1 & ~ E_WARNING);
 
 require "include.php";
 
@@ -20,7 +21,7 @@ $local = @file("$lol/localsettings.txt");
 if ($local) foreach ($local as $tmp){  $tmp = trim($tmp);   list ($name, $value) = explode("=", $tmp);  $setting[$name] = $value;  }
 
 // mrvacbob 04-2009
-if ($_POST['subj']) $_POST['id'] = $thisverysecond;
+if ($_POST['subj'] ?? false) $_POST['id'] = $thisverysecond;
 
 // If we're getting called to write a post, go for it.
 if ($_GET['shiichan'] == "writenew") {
@@ -313,7 +314,7 @@ if ($_POST["subj"]) {
 if ($threadstopwhendone) chmod ("$_POST[bbs]/dat/$_POST[id].dat", 0440);
 RebuildThreadList($_POST["bbs"], $_POST["id"], $_POST["sage"], false);
 ?>
-<html><title>Success</title><meta http-equiv='refresh' content='1;url=<?=$setting[urltoforum]?><?=$_POST[bbs]?>/'>
+<html><title>Success</title><meta http-equiv='refresh' content='1;url=<?=$setting["urltoforum"]?><?=$_POST["bbs"]?>/'>
 <? readfile("skin/$setting[skin]/success.txt"); ?>
 <br><small><a href='<?=$setting[urltoforum]?><?=$_POST[bbs]?>/'>Click here to be forwarded manually</a></small>
 <hr>
