@@ -10,7 +10,7 @@ include('abbc/abbc.lib.php');
 // current version (int)
 $shiiversion = 3960;
 
-function icons($i, $threadicon) { global $setting; if ($setting[posticons]) return "<img src='posticons/$threadicon'>"; return $i+1; }
+function icons($i, $threadicon) { global $setting; if ($setting['posticons']) return "<img src='posticons/$threadicon'>"; return $i+1; }
 
 function PrintPost($number, $name, $trip, $date, $id, $message, $postfile, $tid, $boardname) {
 	global $setting;
@@ -24,7 +24,7 @@ function PrintPost($number, $name, $trip, $date, $id, $message, $postfile, $tid,
 	$post = str_replace("<%ID%>", $id, $post);
 	if ($tid != 1 && $number != 1) {
 	$messy = explode("<br>", $message); $message = "";
-	for ($i = 1; $i <= $setting[fplines]; $i++) if ($messy) { $message .= array_shift($messy); $message .="<br>"; }
+	for ($i = 1; $i <= $setting['fplines']; $i++) if ($messy) { $message .= array_shift($messy); $message .="<br>"; }
 	if ($messy) $message .= "<i>(<a href='read.php/$boardname/$tid/$number'>Post truncated.</a>)</i>";
 }
 	$post = str_replace("<%MESSAGE%>", $message, $post);
@@ -51,7 +51,7 @@ function PrintThread($boardname, $threadid, $postarray, $isitreadphp) {
 	$numposts = count($thread) - 1;
 	if (!$isitreadphp) {
 	$postthing = $threadid;
-	$start = $numposts - $setting[fpposts] + 1;
+	$start = $numposts - $setting['fpposts'] + 1;
 	if ($start < 1) $start = 1;
 	$end = $numposts;
 	$postarray = array("$start-$end");
@@ -61,16 +61,16 @@ function PrintThread($boardname, $threadid, $postarray, $isitreadphp) {
 if ($isitreadphp) {
 	$top = file_get_contents("skin/$setting[skin]/threadtop.txt");
 	if (file_exists("option.txt")) $option = "<div class='option'>".file_get_contents("option.txt")."</div>"; else $option = "";
-	$setting[posticons] ? $top = str_replace("<%THREADICON%>", "<img src='posticons/$threadicon' alt='thread icon'>", $top) : $top = str_replace("<%THREADICON%>", "", $top);
-	$top = str_replace("<%FORUMNAME%>", $setting[forumname], $top);
-	$top = str_replace("<%FORUMURL%>", $setting[urltoforum], $top);
+	$setting['posticons'] ? $top = str_replace("<%THREADICON%>", "<img src='posticons/$threadicon' alt='thread icon'>", $top) : $top = str_replace("<%THREADICON%>", "", $top);
+	$top = str_replace("<%FORUMNAME%>", $setting['forumname'], $top);
+	$top = str_replace("<%FORUMURL%>", $setting["urltoforum"], $top);
 	$top = str_replace("<%BOARDURL%>", $boardname, $top);
-	$top = str_replace("<%BOARDNAME%>", $setting[boardname], $top);
+	$top = str_replace("<%BOARDNAME%>", $setting['boardname'], $top);
 	$top = str_replace("<%OPTION%>", $option, $top);
-	if ($setting[encoding] == "sjis") $top = str_replace("<%ENCODING%>", "<META http-equiv='Content-Type' content='text/html; charset=Shift_JIS'><style>* { font-family: Mona,'MS PGothic' !important } ".abbc_css()."</style>", $top);
+	if ($setting["encoding"] == "sjis") $top = str_replace("<%ENCODING%>", "<META http-equiv='Content-Type' content='text/html; charset=Shift_JIS'><style>* { font-family: Mona,'MS PGothic' !important } ".abbc_css()."</style>", $top);
 	else $top = str_replace("<%ENCODING%>", "<META http-equiv='Content-Type' content='text/html; charset=UTF-8'><style>".abbc_css()."</style>", $top);
 	$top = str_replace("<%THREADNAME%>", $threadname, $top);
-	$isitreadphp ? $top = str_replace("<%PAGES%>", PrintPages($numposts, $boardname, $threadid, $setting[postsperpage]), $top) : $top = str_replace("<%PAGES%>", "", $top);
+	$isitreadphp ? $top = str_replace("<%PAGES%>", PrintPages($numposts, $boardname, $threadid, $setting["postsperpage"]), $top) : $top = str_replace("<%PAGES%>", "", $top);
 	$top = str_replace("<%STARTFORM%>", "<form name='post$postthing' action='post.php' method='POST'><input type='hidden' name='bbs' value='$boardname'><input type='hidden' name='id' value='$threadid'><input type='hidden' name='shiichan' value='proper'>", $top);
 	$return = $top;
 } else { 
@@ -88,7 +88,7 @@ if ($isitreadphp) {
 	 else $return .= PrintPost(1, $name, $trip, $date, $id, $message, $postfile, $threadid, $boardname);
 	 # The latest replies are hidden... but gotta have skins!
          $hidden = file_get_contents("skin/$setting[skin]/hidden.txt");
-	 $hidden = str_replace("<%FEW%>", $setting[fpposts], $hidden);
+	 $hidden = str_replace("<%FEW%>", $setting['fpposts'], $hidden);
 	 $hidden = str_replace("<%READ%>", "read.php/$boardname/$threadid/1-$setting[postsperpage]", $hidden);
 	 $return .= $hidden; 
 	}
@@ -124,7 +124,7 @@ if ($isitreadphp) { # read.php takes its skin file
 } else $bottom = file_get_contents("skin/$setting[skin]/smallthreadbottom.txt");
 	$bottom = str_replace("<%NUMPOSTS%>", $numposts + 1, $bottom);
 	if (!is_writable("$boardname/dat/$threadid.dat")) $bottom = str_replace("<%TEXTAREA%>", "This thread is threadstopped. You can't reply anymore.", $bottom);
-	else if ($setting[namefield]) $bottom = str_replace("<%TEXTAREA%>", "<textarea rows='5' cols='64' name='mesg'></textarea><br><input type='submit' value='Add Reply'> Name <input name='name'> <input name='sage' type='checkbox'> Sage?<br><a href='read.php/$boardname/$threadid/1-$setting[postsperpage]'>First Page</a> - <a href='read.php/$boardname/$threadid/l$setting[postsperpage]'>Last $setting[postsperpage]</a> - <a href='read.php/$boardname/$threadid/'>Entire Thread</a>", $bottom);
+	else if ($setting['namefield']) $bottom = str_replace("<%TEXTAREA%>", "<textarea rows='5' cols='64' name='mesg'></textarea><br><input type='submit' value='Add Reply'> Name <input name='name'> <input name='sage' type='checkbox'> Sage?<br><a href='read.php/$boardname/$threadid/1-$setting[postsperpage]'>First Page</a> - <a href='read.php/$boardname/$threadid/l$setting[postsperpage]'>Last $setting[postsperpage]</a> - <a href='read.php/$boardname/$threadid/'>Entire Thread</a>", $bottom);
 	else $bottom = str_replace("<%TEXTAREA%>", "<textarea rows='5' cols='64' name='mesg'></textarea><br><input type='submit' value='Add Reply'> <input name='sage' type='checkbox'> Sage?<br><a href='read.php/$boardname/$threadid/1-$setting[postsperpage]'>First Page</a> - <a href='read.php/$boardname/$threadid/l$setting[postsperpage]'>Last $setting[postsperpage]</a> - <a href='read.php/$boardname/$threadid/'>Entire Thread</a>", $bottom);
 
 	$bottom = str_replace("<%REPLYLINK%>", "post.php?id=$threadid&amp;bbs=$boardname", $bottom);
@@ -142,7 +142,8 @@ function RebuildThreadList($bbs, $thisid, $sage, $rmthread) {
 
 	if ($thisid!=1) {
 		global $_POST, $thisverysecond;
-		while (list($value, $line) = each($subject)) {
+//		while (list($value, $line) = each($subject)) {
+		foreach ($subject as $value => $line){
 			list ($threadname, $author, $threadicon, $id, $replies, $last, $lasttime) = explode("<>", $line);
 			if ($id == $thisid) {
 			$slice1 = array_slice($subject, 0, $value);
@@ -169,28 +170,28 @@ function RebuildThreadList($bbs, $thisid, $sage, $rmthread) {
 	if (file_exists("option.txt")) $option = "<div class='option'>".file_get_contents("option.txt")."</div>"; else $option = "";
 	$top = file_get_contents("skin/$setting[skin]/boardtop.txt");
 	$top = str_replace("<%POST%>","<form action='post.php'><input type='hidden' name='shiichan' value='writenew'><input type='hidden' name='bbs' value='$bbs'><input type='submit' value='New Thread'></form>", $top);
-	$top = str_replace("<%FORUMURL%>", $setting[urltoforum], $top);
+	$top = str_replace("<%FORUMURL%>", $setting["urltoforum"], $top);
 	$top = str_replace("<%BOARDURL%>", $bbs, $top);
-	$top = str_replace("<%FORUMNAME%>", $setting[forumname], $top);
-	$top = str_replace("<%BOARDNAME%>", $setting[boardname], $top);
+	$top = str_replace("<%FORUMNAME%>", $setting["forumname"], $top);
+	$top = str_replace("<%BOARDNAME%>", $setting["boardname"], $top);
 	$top = str_replace("<%OPTION%>", $option, $top);
-	if ($setting[encoding] == "sjis") $top = str_replace("<%ENCODING%>", "<META http-equiv='Content-Type' content='text/html; charset=Shift_JIS'><style>* { font-family: Mona,'MS PGothic' !important }".abbc_css()."</style>", $top);
+	if ($setting["encoding"] == "sjis") $top = str_replace("<%ENCODING%>", "<META http-equiv='Content-Type' content='text/html; charset=Shift_JIS'><style>* { font-family: Mona,'MS PGothic' !important }".abbc_css()."</style>", $top);
 	else $top = str_replace("<%ENCODING%>", "<META http-equiv='Content-Type' content='text/html; charset=UTF-8'><style>".abbc_css()."</style>", $top);
 	fputs($f, $top);
 	if (!$subject) fputs($f, "<tr><td colspan='5'><p style='text-align:center; padding: 1em'>This forum has no threads in it.</p></td></tr>");
 	
 	
-	else { for ($i = 0; $i < $setting[fpthreads]; $i++) {
+	else { for ($i = 0; $i < $setting["fpthreads"]; $i++) {
 	if (!$subject[$i]) break;
 	list ($threadname, $author, $threadicon, $id, $replies, $last, $lasttime) = explode("<>", $subject[$i]);	
 	$time = date("j M Y H:i", $lasttime);
 	$icon = icons($i, $threadicon);
-	$pages = ceil($replies / $setting[postsperpage]);
-	 $last = ($pages - 1) * $setting[postsperpage];
+	$pages = ceil($replies / $setting["postsperpage"]);
+	 $last = ($pages - 1) * $setting["postsperpage"];
 	fputs($f, "<tr><td><a href='read.php/$bbs/$id/'>$icon</a> </td><td><a href='$bbs/#$id'>$threadname</a>");
 	 if ($pages > 1) { fputs($f, " ( ");
 	 for ($j = 0; $j < $pages && $j < 7; $j++) {
-	$jam = $j * $setting[postsperpage] + 1; $jelly = $jam - 1 + $setting[postsperpage];
+	$jam = $j * $setting["postsperpage"] + 1; $jelly = $jam - 1 + $setting["postsperpage"];
 	 fputs($f, "<a href='read.php/$bbs/$id/$jam-$jelly'>$jam</a> "); }
 	 if ($pages > 6) { 
 	 fputs($f, "... <a href='read.php/$bbs/$id/$last-'>Last page</a> ");
@@ -200,7 +201,7 @@ function RebuildThreadList($bbs, $thisid, $sage, $rmthread) {
 	  fputs($f, "</td><td>$author</td><td>$replies</td><td nowrap><small><a href='read.php/$bbs/$id/$last-'>$time</a></small></td></tr>");
 	}
 	
-	for ($i = $setting[fpthreads]; $i < $setting[fpthreads] + $setting[additionalthreads]; $i++) {
+	for ($i = $setting["fpthreads"]; $i < $setting["fpthreads"] + $setting['additionalthreads']; $i++) {
 	if (!$subject[$i]) break;
 	list ($threadname, $author, $threadicon, $id, $replies, $last, $lasttime) = explode("<>", $subject[$i]);	
 	$time = date("j M Y H:i", $lasttime);
@@ -213,7 +214,7 @@ function RebuildThreadList($bbs, $thisid, $sage, $rmthread) {
 	$middle = str_replace("<%HEADTXT%>", file_get_contents("$bbs/head.txt"), $middle);
 	fputs($f, $middle);
 	
-	for ($i = 0; $i < $setting[fpthreads]; $i++) {
+	for ($i = 0; $i < $setting["fpthreads"]; $i++) {
 	if (!$subject[$i]) break;
 	list ($threadname, $author, $threadicon, $id, $replies, $last, $lasttime) = explode("<>", $subject[$i]);
 	fputs ($f, PrintThread($bbs, $id, array("0"), false));
@@ -232,7 +233,7 @@ function SecureSalt()
     if (file_exists("salt.cgi")) { #already generated a key
         $fd = fopen("salt.cgi","r");
         $fstats = fstat($fd);
-        $salt = fread($fd,$fstats[size]);
+        $salt = fread($fd,$fstats['size']);
         fclose($fd);
     } else { 
         system("openssl rand 448 > salt.cgi",$err);
@@ -240,7 +241,7 @@ function SecureSalt()
             chmod("salt.cgi",0400);
             $fd = fopen("salt.cgi","r");
             $fstats = fstat($fp);
-            $salt = fread($fd,$fstats[size]);
+            $salt = fread($fd,$fstats['size']);
             fclose($fd);
         }
     }

@@ -1130,28 +1130,28 @@ function abbc_css()
 }
 .quote .quote .quote
 {
-	border-left: {$abbc_cfg[quote_borderl3]};
+	border-left: {$abbc_cfg['quote_borderl3']};
 }
 .qname
 {
-	font: {$abbc_cfg[qnamefont]};
-	color: {$abbc_cfg[qname_color]};
+	font: {$abbc_cfg['qnamefont']};
+	color: {$abbc_cfg['qname_color']};
 	margin-bottom: 4px;
 }
 tt, .code
 {
-	font: {$abbc_cfg[monofont]};
+	font: {$abbc_cfg['monofont']};
 }
 tt
 {
-	color: {$abbc_cfg[m_color]};
+	color: {$abbc_cfg['m_color']};
 }
 .code
 {
-	color: {$abbc_cfg[code_color]};
-	background: {$abbc_cfg[code_back]};
-	padding: {$abbc_cfg[code_padding]};
-	margin: {$abbc_cfg[code_margin]};
+	color: {$abbc_cfg['code_color']};
+	background: {$abbc_cfg['code_back']};
+	padding: {$abbc_cfg['code_padding']};
+	margin: {$abbc_cfg['code_margin']};
 }
 .eop
 {
